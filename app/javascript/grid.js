@@ -1,6 +1,6 @@
 export const COLOURS = ['red', 'green', 'blue', 'yellow'];
-const MAX_X = 10;
-const MAX_Y = 10;
+export const MAX_X = 10;
+export const MAX_Y = 10;
 
 export class Block {
   constructor(x, y) {
@@ -52,6 +52,28 @@ export class BlockGrid {
 
   blockClicked(e, block) {
     console.log(e, block);
+    //getConnectedBlocks(block)
+
+    //removeBlocks()
+
+    //collapse/update 
+  };
+
+  getAdjacentBlocks(block) {
+    let result = [];
+    if (block.x > 0) {
+      result.push(this.grid[block.x - 1][block.y]); //left
+    }
+    if (block.x < MAX_X) {
+      result.push(this.grid[block.x + 1][block.y]); //right
+    }
+    if (block.y > 0) {
+      result.push(this.grid[block.x][block.y - 1]); //up
+    }
+    if (block.y < MAX_Y) {
+      result.push(this.grid[block.x][block.y + 1]); //down
+    }
+    return result;
   }
 }
 

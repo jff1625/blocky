@@ -1,4 +1,4 @@
-import { Block, COLOURS } from './grid';
+import { Block, COLOURS, BlockGrid, MAX_X, MAX_Y } from './grid';
 import { assert } from 'chai';
 
 describe('Block', () => {
@@ -15,5 +15,40 @@ describe('Block', () => {
 });
 
 describe('BlockGrid', () => {
-  xit('should be implemented!', () => {});
+  var blockGrid;
+
+  beforeEach(function(){
+    blockGrid = new BlockGrid;
+  });
+  
+  it('can be instanciated successfully', () => {
+    assert.isTrue(blockGrid instanceof BlockGrid);
+  });
+
+  it('has the correct grid length and depth', () => {
+    assert.equal(blockGrid.grid.length, MAX_X);
+    assert.equal(blockGrid.grid[0].length, MAX_Y);
+  });
+
+  it('has a .grid prop which contains Block instances', () => {
+    assert.isTrue(blockGrid.grid[0][0] instanceof Block);
+    assert.isTrue(blockGrid.grid[MAX_X -1][MAX_Y -1] instanceof Block);
+  });
+
+  describe('getAdjacentBlocks', () => {
+    it('returns an array of four blocks on a coord near the middle', () => {
+      let block = blockGrid.grid[5][5];
+      let result = blockGrid.getAdjacentBlocks(block);
+      assert.typeOf(result, "array");
+      assert.lengthOf(result, 4);
+    });
+
+    it('returns an array of two blocks on a coord in a corner', () => {
+      let block = blockGrid.grid[0][0];
+      let result = blockGrid.getAdjacentBlocks(block);
+      assert.typeOf(result, "array");
+      assert.lengthOf(result, 2);
+    });
+  });
+  
 });
