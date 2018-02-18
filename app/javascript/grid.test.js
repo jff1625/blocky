@@ -51,4 +51,20 @@ describe('BlockGrid', () => {
     });
   });
   
+  describe('getConnectedBlocks', () => {
+    it('returns only the specified block when no neighbours are the same colour', () => {
+      let test = {x:1, y: 2};
+      let targetBlock = blockGrid.grid[test.x][test.y];
+      targetBlock.colour = COLOURS[0];
+      blockGrid.grid[test.x-1][test.y].colour = COLOURS[1];
+      blockGrid.grid[test.x+1][test.y].colour = COLOURS[1];
+      blockGrid.grid[test.x][test.y-1].colour = COLOURS[1];
+      blockGrid.grid[test.x][test.y+1].colour = COLOURS[1];
+      
+      let result = blockGrid.getConnectedBlocks(targetBlock);
+      assert.typeOf(result, "array");
+      assert.lengthOf(result, 1);
+      assert.equal(result[0], targetBlock);
+    });
+  });
 });
