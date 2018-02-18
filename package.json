@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "start": "webpack-dev-server --open",
-    "test": "mocha --require babel-polyfill --compilers js:babel-register,jsdom-global/register 'app/**/*.test.js'",
+    "test": "mocha --require babel-polyfill --compilers js:babel-register,jsdom-global/register \"app/**/*.test.js\"",
     "test:watch": "yarn test -- --watch",
     "prettier": "prettier --single-quote --write 'app/**/*.js'"
   },
