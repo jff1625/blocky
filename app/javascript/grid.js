@@ -59,6 +59,20 @@ export class BlockGrid {
     //collapse/update 
   };
 
+  getConnectedBlocks(block) {
+    let toCheck = [block];
+    let hits = [];
+    let current;
+    toCheck.push(this.getAdjacentBlocks(block));
+    while (current = toCheck.pop()) {
+      if (current.colour == block.colour) {
+        hits.push(current);
+        toCheck.push(this.getAdjacentBlocks(current));
+      }
+    }
+    return hits;
+  };
+
   getAdjacentBlocks(block) {
     let result = [];
     if (block.x > 0) {
@@ -74,7 +88,7 @@ export class BlockGrid {
       result.push(this.grid[block.x][block.y + 1]); //down
     }
     return result;
-  }
+  };
 }
 
 window.addEventListener('DOMContentLoaded', () => new BlockGrid().render());
