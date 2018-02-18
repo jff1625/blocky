@@ -61,14 +61,26 @@ export class BlockGrid {
 
   getConnectedBlocks(block) {
     let toCheck = [block];
+    let checked = [];
     let hits = [];
     let current;
-    toCheck.push(this.getAdjacentBlocks(block));
-    while (current = toCheck.pop()) {
+    while (current = toCheck.shift()) {
       if (current.colour == block.colour) {
+        //'current' is connected to the clicked block and is the same colour.
+        //Add it to the hits list
         hits.push(current);
-        toCheck.push(this.getAdjacentBlocks(current));
+        
+        //Now we need to also check all the blocks that are adjacent to the connected block we just found,
+        // but only if we didn't already check them
+        let adjacentBlocks = this.getAdjacentBlocks(current);
+        adjacentBlocks.forEach(adjacent => {
+          if (!checked.includes(adjacent)) {
+            toCheck.push(adjacent);
+          };
+        })
       }
+      //Make sure we don't waste time checking this one again.
+      checked.push(current);
     }
     return hits;
   };
@@ -78,13 +90,13 @@ export class BlockGrid {
     if (block.x > 0) {
       result.push(this.grid[block.x - 1][block.y]); //left
     }
-    if (block.x < MAX_X) {
+    if (block.x < MAX_X - 1) {
       result.push(this.grid[block.x + 1][block.y]); //right
     }
     if (block.y > 0) {
       result.push(this.grid[block.x][block.y - 1]); //up
     }
-    if (block.y < MAX_Y) {
+    if (block.y < MAX_Y - 1) {
       result.push(this.grid[block.x][block.y + 1]); //down
     }
     return result;
