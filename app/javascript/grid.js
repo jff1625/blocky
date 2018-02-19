@@ -7,6 +7,7 @@ export class Block {
     this.x = x;
     this.y = y;
     this.colour = COLOURS[Math.floor(Math.random() * COLOURS.length)];
+    this.hidden = false;
   }
 }
 
@@ -52,11 +53,15 @@ export class BlockGrid {
 
   blockClicked(e, block) {
     console.log(e, block);
-    //getConnectedBlocks(block)
+    let connected = this.getConnectedBlocks(block);
 
-    //removeBlocks()
+    connected.forEach(connectedBlock => {
+      connectedBlock.hidden = true;
+    })
 
-    //collapse/update 
+    this.collapse();
+
+    this.render();
   };
 
   getConnectedBlocks(block) {
@@ -66,7 +71,7 @@ export class BlockGrid {
     let current;
     while (current = toCheck.shift()) {
       if (current.colour == block.colour) {
-        //'current' is connected to the clicked block and is the same colour.
+        //'current' is connected/adjacent to the clicked block and is the same colour.
         //Add it to the hits list
         hits.push(current);
         
@@ -100,6 +105,26 @@ export class BlockGrid {
       result.push(this.grid[block.x][block.y + 1]); //down
     }
     return result;
+  };
+
+  collapse() {
+    //iterate the columns
+    this.grid.forEach((col, x, grid) => {
+      //copy hidden to hiddenList
+      let hiddenList = col.filter(block => block.hidden);
+
+      //remove hidden from col
+      grid[x] = col.filter(block => !block.hidden);
+
+      //concat hiddenList
+      grid[x] = grid[x].concat(hiddenList);
+
+      //update y values
+      grid[x] = grid[x].map((block, y) => {
+        grid[x][y].y = y; 
+        return grid[x][y];
+      })
+    });
   };
 }
 

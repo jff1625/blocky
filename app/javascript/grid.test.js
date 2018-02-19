@@ -22,39 +22,39 @@ describe('BlockGrid', () => {
   });
   
   it('can be instanciated successfully', () => {
-    assert.isTrue(blockGrid instanceof BlockGrid);
+    assert.isTrue(blockGrid instanceof BlockGrid, 'created an instance of BlockGrid');
   });
 
   it('has the correct grid length and depth', () => {
-    assert.equal(blockGrid.grid.length, MAX_X);
-    assert.equal(blockGrid.grid[0].length, MAX_Y);
+    assert.equal(blockGrid.grid.length, MAX_X, 'grid length is correct (correct number of columns)');
+    assert.equal(blockGrid.grid[0].length, MAX_Y, 'grid depth is correct (correct number of rows)');
   });
 
   it('has a .grid prop which contains Block instances', () => {
-    assert.isTrue(blockGrid.grid[0][0] instanceof Block);
-    assert.isTrue(blockGrid.grid[MAX_X -1][MAX_Y -1] instanceof Block);
+    assert.isTrue(blockGrid.grid[0][0] instanceof Block, 'bottom left corner of grid holds an instance of Block');
+    assert.isTrue(blockGrid.grid[MAX_X -1][MAX_Y -1] instanceof Block), 'top right corner of grid holds an instance of Block';
   });
 
   describe('getAdjacentBlocks', () => {
     it('returns an array of four blocks on a coord near the middle', () => {
       let block = blockGrid.grid[5][5];
       let result = blockGrid.getAdjacentBlocks(block);
-      assert.typeOf(result, "array");
-      assert.lengthOf(result, 4);
+      assert.typeOf(result, "array", 'returned type is \'array\'');
+      assert.lengthOf(result, 4, 'returned array length is 4');
     });
 
-    it('returns an array of two blocks on a coord in top left corner', () => {
+    it('returns an array of two blocks on a coord in bottom left corner', () => {
       let block = blockGrid.grid[0][0];
       let result = blockGrid.getAdjacentBlocks(block);
-      assert.typeOf(result, "array");
-      assert.lengthOf(result, 2);
+      assert.typeOf(result, "array", 'returned type is \'array\'');
+      assert.lengthOf(result, 2, 'returned array length is 2');
     });
 
-    it('returns an array of two blocks on a coord in bottom right corner', () => {
+    it('returns an array of two blocks on a coord in top right corner', () => {
       let block = blockGrid.grid[MAX_X-1][MAX_Y-1];
       let result = blockGrid.getAdjacentBlocks(block);
-      assert.typeOf(result, "array");
-      assert.lengthOf(result, 2);
+      assert.typeOf(result, "array", 'returned type is \'array\'');
+      assert.lengthOf(result, 2, 'returned array length is 2');
     });
   });
   
@@ -69,9 +69,9 @@ describe('BlockGrid', () => {
       blockGrid.grid[test.x][test.y+1].colour = COLOURS[1];
 
       let result = blockGrid.getConnectedBlocks(targetBlock);
-      assert.typeOf(result, "array");
-      assert.lengthOf(result, 1);
-      assert.equal(result[0], targetBlock);
+      assert.typeOf(result, "array", 'returned type is \'array\'');
+      assert.lengthOf(result, 1, 'returned array length is 1');
+      assert.equal(result[0], targetBlock, 'returned the correct Block inside the array');
     });
 
     it('returns a row of blocks when that row is all the same colour', () => {
@@ -84,11 +84,11 @@ describe('BlockGrid', () => {
       }
 
       let result = blockGrid.getConnectedBlocks(targetBlock);
-      assert.typeOf(result, "array");
-      assert.lengthOf(result, MAX_X);
+      assert.typeOf(result, "array", 'returned type is \'array\'');
+      assert.lengthOf(result, MAX_X, 'returned array length is equal to MAX_X');
       result.forEach(block => {
-        assert.equal(block.colour, targetBlock.colour);
-        assert.equal(block.y, targetBlock.y);
+        assert.equal(block.colour, targetBlock.colour, 'block has same colour as target block');
+        assert.equal(block.y, targetBlock.y, 'block has same \'y\' value as target block');
       });
     });
 
@@ -102,11 +102,11 @@ describe('BlockGrid', () => {
       }
 
       let result = blockGrid.getConnectedBlocks(targetBlock);
-      assert.typeOf(result, "array");
-      assert.lengthOf(result, MAX_Y);
+      assert.typeOf(result, "array", 'returned type is \'array\'');
+      assert.lengthOf(result, MAX_Y, 'returned array length is equal to MAX_Y');
       result.forEach(block => {
-        assert.equal(block.colour, targetBlock.colour);
-        assert.equal(block.x, targetBlock.x);
+        assert.equal(block.colour, targetBlock.colour, 'block has same colour as target block');
+        assert.equal(block.x, targetBlock.x, 'block has same \'x\' value as target block');
       });
     });
 
@@ -114,11 +114,11 @@ describe('BlockGrid', () => {
       let colourMap = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+        [0, 0, 1, 1, 1, 1, 1, 2, 0, 0],
         [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-        [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 3, 1, 0, 0, 0],
+        [0, 2, 1, 1, 1, 1, 1, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -131,15 +131,37 @@ describe('BlockGrid', () => {
       let test = {x:3, y: 5};
       let targetBlock = blockGrid.grid[test.x][test.y];
 
-
       let result = blockGrid.getConnectedBlocks(targetBlock);
-      assert.typeOf(result, "array");
-      assert.lengthOf(result, 10);
+      assert.typeOf(result, "array", 'returned type is \'array\'');
+      assert.lengthOf(result, 12, 'returned array length is correct (12)');
       result.forEach(block => {
-        assert.equal(block.colour, targetBlock.colour);
+        assert.equal(block.colour, targetBlock.colour, 'block has same colour as target block');
       });
     });
 
+  });
+
+  describe('collapse', () => {
+    it('removes a single \'hidden\' block from its place in the grid and moves it to the top of its column', () => {
+      let testCoord = {x:3, y: 5};
+      let block = blockGrid.grid[testCoord.x][testCoord.y];
+      block.hidden = true;
+      blockGrid.collapse();
+      assert.equal(block.y, MAX_Y-1, 'block.y value was correctly set to top of grid (MAX_Y - 1)');
+      assert.equal(blockGrid.grid[testCoord.x][MAX_Y-1], block, 'block at top of the column is the same one we applied \'hidden\' to');
+    });
+
+    it('removes two \'hidden\' blocks from the same column and move them to the top, in the correct order', () => {
+      let lowerBlock = blockGrid.grid[1][2];
+      let higherBlock = blockGrid.grid[1][5];
+      lowerBlock.hidden = true;
+      higherBlock.hidden = true;
+
+      blockGrid.collapse();
+
+      assert.equal(lowerBlock.y, MAX_Y-2, 'lower hidden block is second to top in the column');
+      assert.equal(higherBlock.y, MAX_Y-1, 'higher hidden block is at top of column');
+    });
 
   });
 });
