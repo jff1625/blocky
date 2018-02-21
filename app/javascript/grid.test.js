@@ -1,18 +1,36 @@
 import { Block, COLOURS, BlockGrid, MAX_X, MAX_Y } from './grid';
 import { assert } from 'chai';
+var sinon = require('sinon');
 
 describe('Block', () => {
-  it('should be created with correct coordinates and one of the valid colours', () => {
+  it('should be created with correct coordinates', () => {
     let testCoords = [[1, 2], [4, 9], [0, 0]];
 
     testCoords.forEach(testCoord => {
       let block = new Block(...testCoord);
       assert.equal(block.x, testCoord[0], 'x is set correctly');
       assert.equal(block.y, testCoord[1], 'y is set correctly');
+    });
+  });
+
+  it('should be created with one of the valid colours', () => {
+    let testCoords = [[1, 2], [4, 9], [0, 0]];
+
+    testCoords.forEach(testCoord => {
+      let block = new Block(...testCoord);
       assert.ok(COLOURS.indexOf(block.colour) > -1, 'colour is valid');
     });
   });
-});
+
+  it('should be not be hidden initially', () => {
+    let testCoords = [[1, 2], [4, 9], [0, 0]];
+
+    testCoords.forEach(testCoord => {
+      let block = new Block(...testCoord);
+      assert.isFalse(block.hidden, 'block is not hidden');
+    });
+  });
+});//describe Block
 
 describe('BlockGrid', () => {
   var blockGrid;
@@ -56,7 +74,7 @@ describe('BlockGrid', () => {
       assert.typeOf(result, "array", 'returned type is \'array\'');
       assert.lengthOf(result, 2, 'returned array length is 2');
     });
-  });
+  });//describe getAdjacentBlocks
   
   describe('getConnectedBlocks', () => {
     it('returns only the specified block when no neighbours are the same colour', () => {
@@ -138,10 +156,25 @@ describe('BlockGrid', () => {
         assert.equal(block.colour, targetBlock.colour, 'block has same colour as target block');
       });
     });
-
-  });
+  });//describe getConnectedBlocks
 
   describe('collapse', () => {
+    it('returns true when it found something to remove', () => {
+      let testCoord = {x:3, y: 5};
+      let block = blockGrid.grid[testCoord.x][testCoord.y];
+      block.hidden = true;
+      let result = blockGrid.collapse();
+      assert.isTrue(result, 'returned true');
+    });
+
+    it('returns false when it found nothing to remove', () => {
+      let testCoord = {x:3, y: 5};
+      let block = blockGrid.grid[testCoord.x][testCoord.y];
+
+      let result = blockGrid.collapse();
+      assert.isFalse(result, 'returned false');
+    });
+
     it('removes a single \'hidden\' block from its place in the grid and moves it to the top of its column', () => {
       let testCoord = {x:3, y: 5};
       let block = blockGrid.grid[testCoord.x][testCoord.y];
@@ -156,12 +189,83 @@ describe('BlockGrid', () => {
       let higherBlock = blockGrid.grid[1][5];
       lowerBlock.hidden = true;
       higherBlock.hidden = true;
-
       blockGrid.collapse();
-
       assert.equal(lowerBlock.y, MAX_Y-2, 'lower hidden block is second to top in the column');
       assert.equal(higherBlock.y, MAX_Y-1, 'higher hidden block is at top of column');
     });
+  });//describe collapse
 
-  });
-});
+  describe('update', () => {
+    it('returns true when it found something to remove', () => {
+      let testCoord = {x:3, y: 5};
+      let block = blockGrid.grid[testCoord.x][testCoord.y];
+      block.hidden = true;
+      let result = blockGrid.collapse();
+      assert.isTrue(result, 'returned true');
+    });
+
+    it('returns false when it found something to remove', () => {
+      let testCoord = {x:3, y: 5};
+      let block = blockGrid.grid[testCoord.x][testCoord.y];
+      
+      let result = blockGrid.collapse();
+      assert.isFalse(result, 'returned false');
+    });
+  });//describe update
+
+  describe('blockClicked', () => {
+    it('calls getConnectedBlocks() if the block is not hidden', () => {
+      var stub = sinon.stub(blockGrid, "getConnectedBlocks");
+      stub.returns([]);
+      let block = blockGrid.grid[0][0];
+      blockGrid.blockClicked({}, block);
+      assert(stub.called, 'getConnectedBlocks() method was called');
+    });
+
+    it('calls collapse() if the block is not hidden', () => {
+      //update does DOM stuff, so stub it.
+      var stub = sinon.stub(blockGrid, "collapse");
+      let block = blockGrid.grid[0][0];
+      blockGrid.blockClicked({}, block);
+      assert(stub.called, 'collapse() method was called');
+    });
+
+    it('calls update() if the block is not hidden', () => {
+      //update does DOM stuff, so stub it.
+      var stub = sinon.stub(blockGrid, "update");
+      let block = blockGrid.grid[0][0];
+      blockGrid.blockClicked({}, block);
+      assert(stub.called, 'update() method was called');
+    });
+
+    it('does not call update() if the block was already hidden', () => {
+      //update does DOM stuff, so stub it.
+      var stub = sinon.stub(blockGrid, "getConnectedBlocks");
+      let block = blockGrid.grid[0][0];
+      block.hidden = true;
+      blockGrid.blockClicked({}, block);
+      assert(stub.notCalled, 'getConnectedBlocks() method was not called');
+    });
+
+    it('does not call collapse() if the block was already hidden', () => {
+      //update does DOM stuff, so stub it.
+      var stub = sinon.stub(blockGrid, "collapse");
+      let block = blockGrid.grid[0][0];
+      block.hidden = true;
+      blockGrid.blockClicked({}, block);
+      assert(stub.notCalled, 'collapse() method was not called');
+    });
+
+    it('does not call update() if the block was already hidden', () => {
+      //update does DOM stuff, so stub it.
+      var stub = sinon.stub(blockGrid, "update");
+      let block = blockGrid.grid[0][0];
+      block.hidden = true;
+      blockGrid.blockClicked({}, block);
+      assert(stub.notCalled, 'update() method was not called');
+    });
+
+  });//describe blockClicked
+  
+
+});//describe BlockGrid

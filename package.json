@@ -8,7 +8,8 @@
     "start": "webpack-dev-server --open",
     "test": "mocha --require babel-polyfill --compilers js:babel-register,jsdom-global/register \"app/**/*.test.js\"",
     "test:watch": "yarn test -- --watch",
-    "prettier": "prettier --single-quote --write 'app/**/*.js'"
+    "prettier": "prettier --single-quote --write 'app/**/*.js'",
+    "jsdoc": "./node_modules/.bin/jsdoc app/javascript/grid.js --destination docs/"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
@@ -19,12 +20,14 @@
     "babel-register": "^6.24.1",
     "chai": "^3.4.1",
     "css-loader": "^0.28.0",
+    "jsdoc": "^3.5.5",
     "jsdom": "^9.12.0",
     "jsdom-global": "^2.1.1",
     "less": "^2.7.2",
     "less-loader": "^4.0.3",
     "mocha": "^3.2.0",
     "prettier": "^0.22.0",
+    "sinon": "^4.3.0",
     "style-loader": "^0.16.1",
     "webpack": "^2.3.3",
     "webpack-dev-server": "^2.4.2"
